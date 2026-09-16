@@ -3007,6 +3007,10 @@ public:
   void
   prep_start()
   {
+    // XDP profiling hook - must run before module sync, which latches
+    // dtrace state that this hook is allowed to change.
+    xrt_core::xdp::run_start(this);
+
     if (m_module) {
       // Sync the module to device to ensure any patches are applied,
       // noop if module patching hasn't changed since last sync.
@@ -3039,9 +3043,6 @@ public:
     pkt->state = ERT_CMD_STATE_NEW;
 
     XRT_DEBUG_CALL(debug_cmd_packet(kernel->get_name(), pkt));
-
-    // XDP profiling hook - called immediately before run is submitted
-    xrt_core::xdp::run_start(this);
   }
 
   // start() - start the run object (execbuf)
@@ -4112,7 +4113,7 @@ public:
     if (m_runlist.empty())
       return;
 
-    // Prep each run object
+    // Prep each run object (also issues the XDP run_start hook)
     for (auto& run : m_runlist)
       run.get_handle()->prep_start();
 
