@@ -56,10 +56,8 @@ finish_flush_device(void* handle);
 void
 run_constructor(xrt::run_impl* run_impl);
 
-// run_start should be called before a run is submitted to the device, ahead of
-// the command preparation that reads run state the callback may still change.
+// run_start should be called immediately before a run is submitted to the device.
 // Extracts kernel data internally from the run_impl.
-// Non-const because the callback may modify run_impl (e.g., set_dtrace_control_file).
 void
 run_start(xrt::run_impl* run_impl);
 

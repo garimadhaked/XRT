@@ -3007,8 +3007,6 @@ public:
   void
   prep_start()
   {
-    // XDP profiling hook - must run before module sync, which latches
-    // dtrace state that this hook is allowed to change.
     xrt_core::xdp::run_start(this);
 
     if (m_module) {
@@ -4113,7 +4111,7 @@ public:
     if (m_runlist.empty())
       return;
 
-    // Prep each run object (also issues the XDP run_start hook)
+    // Prep each run object
     for (auto& run : m_runlist)
       run.get_handle()->prep_start();
 

@@ -242,8 +242,6 @@ run_start(xrt::run_impl* run_impl)
   if (!run_start_cb)
     return;
 
-  // Best-effort instrumentation: an exception escaping here would propagate out
-  // of run::start() and abort a run the user expects to have been submitted.
   try {
     xrt_kernel_data data{};
     xrt_core::kernel_int::get_xdp_kernel_data(run_impl, &data);
