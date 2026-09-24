@@ -2682,6 +2682,7 @@ public:
           "set_dtrace_control_file is not supported for this run, dtrace "
           "control file is only supported for runs in ELF flow");
     }
+
     // Allow when command is not in progress: either not yet started (NEW) or
     // already done (completed/error). Reject when submitted but not yet done.
     if (!cmd->is_done())
@@ -2696,6 +2697,27 @@ public:
     // Store only after module and command payload are updated
     // clone inherits this
     m_dtrace_control_file = path;
+  }
+
+  // Turns dtrace off for this run without touching the config file fallback
+  // that an empty path in set_dtrace_control_file would select.
+  void
+  clear_dtrace_control_file()
+  {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (!m_module)
+      return;
+
+    if (!cmd->is_done())
+      throw xrt_core::error(
+          "Cannot clear dtrace control file: run has already been started and is "
+          "still in progress");
+
+    xrt_core::module_int::clear_dtrace(m_module);
+    if (m_dpu_payload)
+      xrt_core::module_int::fill_ert_dpu_data(m_module, m_dpu_payload);
+
+    m_dtrace_control_file.clear();
   }
 
   // run_type() - constructor
@@ -4687,6 +4709,12 @@ void
 set_dtrace_control_file(xrt::run_impl* run_impl, const std::string& path)
 {
   run_impl->set_dtrace_control_file(path);
+}
+
+void
+clear_dtrace_control_file(xrt::run_impl* run_impl)
+{
+  run_impl->clear_dtrace_control_file();
 }
 
 } // xrt_core::kernel_int
