@@ -552,6 +552,7 @@ make_aie_coredump_elf(const xrt::elf& elf, const std::vector<char>& blob,
       std::chrono::duration_cast<std::chrono::nanoseconds>(
           std::chrono::system_clock::now().time_since_epoch()).count());
   meta.uuid = uuid;
+  meta.elf_filename = get_filename(elf.get_handle().get());
 
   try {
     boost::property_tree::ptree pt_xrt;

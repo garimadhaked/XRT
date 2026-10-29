@@ -263,9 +263,10 @@ std::string
 get_filename(const xrt::elf_impl* elf_impl);
 
 // Package a raw AIE coredump blob into an ET_CORE ELF with metadata.
-// Metadata (timestamp, firmware version, device info, context status) is built
-// internally by querying the device.  The AIE architecture is derived from the
-// ELF's OS/ABI byte.
+// Metadata (timestamp, firmware version, device info, context status, and the
+// ELF filename from get_filename()) is built internally.  The AIE architecture
+// is derived from the ELF's OS/ABI byte.  The filename is empty when the ELF
+// was loaded from a buffer or stream.
 //
 // uuid: UUID to embed in the coredump metadata.  Pass the UUID of the specific
 //   ELF that caused the fault (e.g. the timed-out run's ELF).  Pass empty string
